@@ -41,9 +41,31 @@ _main:
 ;------------------------------------------------------------------------------
 ; LCD_busy
 ;------------------------------------------------------------------------------
+; Faz a leitura da Busy Flag e do contador de enderecos do LCD.
+; - Retorna: A busy flag na C, e o valor do contador de endereco no ACC.
+;------------------------------------------------------------------------------
+LCD_busy:	
+			clr		LCD_en			; prepara para o pulso alto no clock
+			clr		LCD_rs			; seleciona registrador de comando
+			setb	LCD_rw			; define operacao de leitura
+
+			mov		LCD_data, #0FFh	; coloca a porta como entrada.
+
+			setb	LCD_en			; pulso alto no pino de clock
+			clr		LCD_en
+
+			mov		c, LCD_bf		; faz a leitura da busy flag
+			mov		a, LCD_data		; faz a leitura do endereco
+			clr		acc.7			; remove a busy flag do endereco
+
+			ret
+
+;------------------------------------------------------------------------------
+; LCD_wait
+;------------------------------------------------------------------------------
 ; Aguarda ate que a ultima instrucao seja processada pelo LCD.
 ;------------------------------------------------------------------------------
-LCD_busy:
+LCD_wait:
 			ret
 
 ;------------------------------------------------------------------------------
@@ -52,7 +74,7 @@ LCD_busy:
 ; Envia o comando contido no ACC para o LCD.
 ;------------------------------------------------------------------------------
 LCD_sendCmd:
-			acall	LCD_busy	; aguarda a busy flag ser liberada
+			acall	LCD_wait	; aguarda a busy flag ser liberada
 
 			clr		LCD_en		; en = 0, para fazer um pulso de clock alto
 
