@@ -66,6 +66,19 @@ LCD_busy:
 ; Aguarda ate que a ultima instrucao seja processada pelo LCD.
 ;------------------------------------------------------------------------------
 LCD_wait:
+			clr		LCD_en			; prepara para um pulso alto de cock
+			clr		LCD_rs			; seleciona registrador de comandos
+			setb	LCD_rw			; define operacao de leitura
+
+			setb	LCD_bf			; define a bf como i/p
+
+			setb	LCD_en			; pulso de clock alto
+
+_checkBF:	clr		LCD_en			; apos a finalizacao do pulso alto, leio BF
+			setb	LCD_en			; ja prepara para habilitar a leitura
+
+			jb		LCD_bf, _checkBF; se BF=1, check denovo
+			
 			ret
 
 ;------------------------------------------------------------------------------
