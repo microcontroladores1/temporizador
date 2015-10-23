@@ -38,6 +38,33 @@ _main:
 ; SUB-ROTINAS
 ;******************************************************************************
 
+;------------------------------------------------------------------------------
+; LCD_busy
+;------------------------------------------------------------------------------
+; Aguarda ate que a ultima instrucao seja processada pelo LCD.
+;------------------------------------------------------------------------------
+LCD_busy:
+			ret
+
+;------------------------------------------------------------------------------
+; LCD_sendCmd
+;------------------------------------------------------------------------------
+; Envia o comando contido no ACC para o LCD.
+;------------------------------------------------------------------------------
+LCD_sendCmd:
+			acall	LCD_busy	; aguarda a busy flag ser liberada
+
+			clr		LCD_en		; en = 0, para fazer um pulso de clock alto
+
+			clr		LCD_rs		; selecion registro de instrucao
+			clr		LCD_rw		; seleciona operacao de escrita
+			mov		LCD_data, a	; envia o comando contido no ACC
+
+			setb	LCD_en		; pulso de clock alto
+			clr		LCD_en
+
+			ret
+
 ;******************************************************************************
 			end
 ;******************************************************************************
