@@ -39,6 +39,14 @@ _main:
 ;******************************************************************************
 
 ;------------------------------------------------------------------------------
+; LCD_delay
+;------------------------------------------------------------------------------
+; Da um delay de 30ms
+;------------------------------------------------------------------------------
+LCD_delay:
+			ret
+
+;------------------------------------------------------------------------------
 ; LCD_busy
 ;------------------------------------------------------------------------------
 ; Faz a leitura da Busy Flag e do contador de enderecos do LCD.
@@ -84,7 +92,7 @@ _checkBF:	clr		LCD_en			; apos a finalizacao do pulso alto, leio BF
 ;------------------------------------------------------------------------------
 ; LCD_sendCmd
 ;------------------------------------------------------------------------------
-; Envia o comando contido no ACC para o LCD.
+; Envia tleza comando contido no ACC para o LCD.
 ;------------------------------------------------------------------------------
 LCD_sendCmd:
 			acall	LCD_wait	; aguarda a busy flag ser liberada
@@ -97,6 +105,47 @@ LCD_sendCmd:
 
 			setb	LCD_en		; pulso de clock alto
 			clr		LCD_en
+
+			ret
+
+;------------------------------------------------------------------------------
+; LCD_init
+;------------------------------------------------------------------------------
+; Inicializa o LCD.
+;------------------------------------------------------------------------------
+LCD_init:
+			mov		LCD_data, #30h		
+			acall	LCD_delay
+
+			mov		LCD_data, #30h		
+			acall	LCD_delay
+
+			mov		LCD_data, #30h		
+			acall	LCD_delay
+
+			; Function Set: 0 0 1 DL N F - -
+			; - 8-bit Interface (DL = 1)
+			; - 2 lines (N = 1)
+			; - Font 5x8 (F = 0)
+			mov		a, #38h
+			acall	LCD_sendCmd
+
+			; Display On/Off: 0 0 0 0 1 D C B
+			; - Liga display (D = 1)
+			; - Desliga cursor (C = 0)
+			; - Sem Blink (B = 0)
+			mov		a, #0Dh
+			acall	LCD_sendCmd
+
+			; Display Clear: 0 0 0 0 0 0 0 1
+			mov		a, #01h
+			acall	LCD_sendCmd
+
+			; Entry Mode Set: 0 0 0 0 0 1 I/D S
+			; - Auto incremento (I/D = 1)
+			; - Acompanha o shift (S = 1)
+			mov		a, #07h
+			acall	LCD_sendCmd
 
 			ret
 
