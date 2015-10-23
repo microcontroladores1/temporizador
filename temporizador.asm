@@ -160,6 +160,26 @@ LCD_init:
 
 			ret
 
+;------------------------------------------------------------------------------
+; LCD_sendData
+;------------------------------------------------------------------------------
+; Envia o dado contido no ACC para ser impresso.
+;------------------------------------------------------------------------------
+LCD_sendData:
+			acall	LCD_wait		; aguarda o LCD ficar pronto
+			
+			clr		LCD_en			; prepara para pulso alto
+
+			setb	LCD_rs			; seleciona registrador de dados
+			clr		LCD_rw			; define operacao de escrita
+
+			mov		LCD_data, a		; envia o valor contido no ACC
+
+			setb	LCD_en			; pulso alto
+			clr		LCD_en
+
+			ret
+
 ;******************************************************************************
 			end
 ;******************************************************************************
