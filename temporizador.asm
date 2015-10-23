@@ -32,7 +32,8 @@ LCD_en		bit		p3.7		; pino de enable (clock)
 ; MAIN
 ;******************************************************************************
 			org		0030h		; addres right above interrupt vectors
-_main:
+_main:		mov		sp, #30h
+			ajmp	_main
 
 ;******************************************************************************
 ; SUB-ROTINAS
@@ -153,8 +154,8 @@ LCD_init:
 
 			; Entry Mode Set: 0 0 0 0 0 1 I/D S
 			; - Auto incremento (I/D = 1)
-			; - Acompanha o shift (S = 1)
-			mov		a, #07h
+			; - Nao acompanha o shift (S = 0)
+			mov		a, #06h
 			acall	LCD_sendCmd
 
 			ret
